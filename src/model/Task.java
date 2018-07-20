@@ -1,9 +1,12 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * Created by Guillermo Brugarolas on 12/06/2018.
  */
-public class Task {
+public class Task implements Serializable{
+    private static final long serialVersionUID = 42L;
     private String name;
     private int position;
     private String description;

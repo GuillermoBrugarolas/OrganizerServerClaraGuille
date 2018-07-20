@@ -8,7 +8,8 @@ import java.util.LinkedList;
 /**
  * Created by Guillermo Brugarolas on 12/06/2018.
  */
-public class Project implements Serializable {
+public class Project implements Serializable{
+    private static final long serialVersionUID = 42L;
     private User owner;
     private LinkedList<User> members;
     private String name;

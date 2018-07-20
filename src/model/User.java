@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 
-public class User implements Serializable {
+public class User implements Serializable{
 
 	private String nickname;
+
+    private static final long serialVersionUID = 42L;
 
 	private String email;
 

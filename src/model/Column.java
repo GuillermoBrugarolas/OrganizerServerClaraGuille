@@ -1,12 +1,13 @@
 package model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
  * Created by Guillermo Brugarolas on 12/06/2018.
  */
-public class Column {
-
+public class Column implements Serializable{
+    private static final long serialVersionUID = 42L;
     private String name;
     private int position;
     private LinkedList<Task> tasks;
