@@ -47,10 +47,10 @@ public class Logics {
     }
 
     public static User getUser(String message){
-        String userMessage, joinedProjectName;
+        String userMessage, joinedProjectName, name, id, background;
         LinkedList<Project> ownPs, joinedPs;
-        User user = new User();
-        Project p, q, r, s;
+        User user = new User(), us;
+        Project p, q;
         ResultSet dbUser, dbOwn, dbJoined, dbJoined2;
         userMessage = message.substring(4);
         if ((userMessage.contains("@")) && (userMessage.contains("."))){
@@ -67,25 +67,24 @@ public class Logics {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        dbOwn = DBConnector.selectOwnProjects(userMessage);
+        dbOwn = DBConnector.selectOwnProjects(user.getNickname());
         ownPs = new LinkedList<Project>();
-        p = new Project();
         try {
             while (dbOwn != null && dbOwn.next()) {
-                p.setName((String)dbOwn.getObject("name"));
-                p.setId((String)dbOwn.getObject("id"));
-                p.setBackground((String)dbOwn.getObject("background"));
-                p.setOwner(user);
-                ownPs.add(p);
+                name = (String)dbOwn.getObject("name");
+                id = (String)dbOwn.getObject("id");
+                background = (String)dbOwn.getObject("background");
+                us = user;
+                ownPs.add(new Project(us, null, name, id, null, background, null));
             }
             user.setOwnProjects(ownPs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        dbJoined = DBConnector.selectJoinedProjects(userMessage);
+        dbJoined = DBConnector.selectJoinedProjects(user.getNickname());
         joinedPs = new LinkedList<Project>();
-        q = new Project();
         try {
+            q = new Project();
             while (dbJoined != null && dbJoined.next()) {
                 joinedProjectName = (String)dbJoined.getObject("project");
                 dbJoined2 = DBConnector.selectProject(joinedProjectName);

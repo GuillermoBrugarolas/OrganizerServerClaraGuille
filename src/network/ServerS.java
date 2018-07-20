@@ -83,7 +83,6 @@ public class ServerS extends Thread {
                     User userData;
                     System.out.println("going to get user");
                     userData = Logics.getUser(message);
-                    System.out.println("writing user in socket!");
                     ObjectOut.writeObject(userData);
                     ObjectOut.flush();
                 }
