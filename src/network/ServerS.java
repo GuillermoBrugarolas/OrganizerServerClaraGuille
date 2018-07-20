@@ -16,10 +16,6 @@ public class ServerS extends Thread {
 
     private static Socket sClient;
 
-    private FileOutputStream fos;
-
-    private FileInputStream fis;
-    
     private ObjectOutputStream ObjectOut;
 
     private ObjectInputStream ObjectIn;
@@ -51,7 +47,7 @@ public class ServerS extends Thread {
 
     public void run(){
 
-        String message = new String();
+        String message;
 
         while(isOn){
             try{
@@ -64,41 +60,36 @@ public class ServerS extends Thread {
                 if (message.startsWith("ADD")){
                     if(Logics.addUser(message)){
                         ObjectOut.writeObject((String)"OK");
-                        ObjectOut.flush();
                     }else{
                         ObjectOut.writeObject((String)"KO");
-                        ObjectOut.flush();
                     }
                 }
-                if (message.startsWith("LOG")){
+                else if (message.startsWith("LOG")){
                     if(Logics.logUser(message)){
                         ObjectOut.writeObject((String)"OK");
-                        ObjectOut.flush();
                     }else{
                         ObjectOut.writeObject((String)"KO");
-                        ObjectOut.flush();
                     }
                 }
-                if (message.startsWith("GET")){
+                else if (message.startsWith("GET")){
                     User userData;
-                    System.out.println("going to get user");
+                    System.out.println("get user");
                     userData = Logics.getUser(message);
-                    ObjectOut.writeObject(userData);
-                    ObjectOut.flush();
+                    ObjectOut.writeObject((User)userData);
                 }
-                if (message.startsWith("GETALLUSERS")){
+                else if (message.startsWith("GEU")){
                     String allUsersData;
+                    System.out.println("get all users");
                     allUsersData = Logics.getAllUsers();
                     if(!allUsersData.equals("")){
+                        System.out.println(allUsersData);
                         ObjectOut.writeObject((String)allUsersData);
-                        ObjectOut.flush();
                     }else{
                         ObjectOut.writeObject((String)"KO");
-                        ObjectOut.flush();
                     }
-                }
-                ObjectIn.close();
+                } else {}
                 ObjectOut.close();
+                ObjectIn.close();
                 sClient.close();
             }catch(IOException e){
                 e.printStackTrace();

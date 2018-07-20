@@ -194,6 +194,7 @@ public class Logics {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println(sAllUsersData);
         return sAllUsersData;
     }
 
