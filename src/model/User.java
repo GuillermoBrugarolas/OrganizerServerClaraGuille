@@ -8,7 +8,7 @@ public class User implements Serializable{
 
 	private String nickname;
 
-    private static final long serialVersionUID = 42L;
+	private static final long serialVersionUID = 42L;
 
 	private String email;
 
@@ -18,10 +18,10 @@ public class User implements Serializable{
 
 	private LinkedList<Project> joinedProjects;
 
-    public User() {
-    }
+	public User() {
+	}
 
-    public User(String nickname, String email, String password, LinkedList<Project> ownProjects, LinkedList<Project> joinedProjects){
+	public User(String nickname, String email, String password, LinkedList<Project> ownProjects, LinkedList<Project> joinedProjects){
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
@@ -64,14 +64,22 @@ public class User implements Serializable{
 		this.joinedProjects = joinedProjects;
 	}
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "nickname='" + nickname + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", ownProjects=" + ownProjects +
-                ", joinedProjects=" + joinedProjects +
-                '}';
+	public void addOwnProject(Project p){
+	    this.getOwnProjects().add(p);
     }
+
+    public void addJoinedProject(Project pp){
+	    this.getJoinedProjects().add(pp);
+    }
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"nickname='" + nickname + '\'' +
+				", email='" + email + '\'' +
+				", password='" + password + '\'' +
+				", ownProjects=" + ownProjects +
+				", joinedProjects=" + joinedProjects +
+				'}';
+	}
 }

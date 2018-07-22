@@ -53,4 +53,8 @@ public class Column implements Serializable{
                 ", tasks=" + tasks +
                 '}';
     }
+
+    public void addTask(Task task){
+        this.getTasks().add(task);
+    }
 }

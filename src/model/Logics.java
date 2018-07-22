@@ -17,9 +17,6 @@ import model.DBConnector;
  */
 public class Logics {
 
-	private static boolean competition = false;
-	private long difference;
-	private int duration;
 	private MainViewController controller;
 	
 	public Logics(){
@@ -35,9 +32,6 @@ public class Logics {
         boolean ok = false;
         message = message.substring(4);
         array = message.split("/");
-        System.out.println(array[0]);
-        System.out.println(array[1]);
-        System.out.println(array[2]);
         if ((checkUniqueUser(array[0]) && (checkUniqueEMail(array[1])))) {
             if (DBConnector.insertUser(array[0], array[1], array[2])) {
                 ok = true;
@@ -75,7 +69,7 @@ public class Logics {
                 id = (String)dbOwn.getObject("id");
                 background = (String)dbOwn.getObject("background");
                 us = user;
-                ownPs.add(new Project(us, null, name, id, null, background, null));
+                ownPs.add(new Project(us, null, name, id, null, null, null, background));
             }
             user.setOwnProjects(ownPs);
         } catch (SQLException e) {
@@ -182,7 +176,7 @@ public class Logics {
     }
 
     public static String getAllUsers(){
-        String sAllUsersData = "", sSingleUserData = "";
+        String sAllUsersData = "", sSingleUserData;
         ResultSet dbAllUsers;
         dbAllUsers = DBConnector.selectAllUsers();
         try {
@@ -194,35 +188,77 @@ public class Logics {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println(sAllUsersData);
         return sAllUsersData;
     }
 
     public static LinkedList<TasksObject> getTasksInfo(String users){
         String[] usersList;
-        int ii = 0, jj = 0, pending = 0, completed = 0, assigned = 0;
-        double percentage = 0.0;
+        int ii, pending, completed, assigned;
+        double percentage;
         LinkedList<TasksObject> listByTasks = new LinkedList<TasksObject>();
         TasksObject usersTasksData;
         usersList = users.split("/");
         for (ii = 0; ii < usersList.length; ii++) {
-            pending = 0; assigned = 0; completed = 0; percentage = 0.0;
             pending = DBConnector.selectNumOfTasks(usersList[ii], 1);
             completed = DBConnector.selectNumOfTasks(usersList[ii], 0);
             assigned = pending + completed;
             if (assigned >= 1) {
                 percentage = ((double)(completed * 100) / assigned);
-                System.out.println(String.valueOf(percentage));
-                System.out.println('\n');
             } else {
                 percentage = 0.0;
-                System.out.println(String.valueOf(percentage));
-                System.out.println('\n');
             }
             usersTasksData = new TasksObject(usersList[ii], pending, assigned, percentage);
             listByTasks.add(usersTasksData);
         }
         listByTasks.sort(Comparator.<TasksObject>comparingInt(TasksObject::getPending).reversed());
         return listByTasks;
+    }
+
+    public static boolean addNewProject(Project p){
+        boolean added1 = false, added2 = false, added3 = false, added = false;
+        if (DBConnector.insertProject(p)){
+            added1 = true;
+        }
+        if (DBConnector.insertMembers(p)){
+            added2 = true;
+        }
+        if (DBConnector.insertTasks(p)){
+            added3 = true;
+        }
+        if (added1 && added2 && added3){    added = true;}
+        else {  added = false;}
+        return added;
+    }
+
+    public static boolean deleteProject(String message){
+        boolean ok = false;
+        message = message.substring(4);
+        if (DBConnector.deleteProject(message)){
+            ok = true;
+        } else { ok = false;}
+        return ok;
+    }
+
+    public static boolean joinProject(String message){
+        String[] array = new String[2];
+        String projectName="";
+        ResultSet rs;
+        boolean ok = false;
+        message = message.substring(4);
+        array = message.split("/");
+        rs = DBConnector.getProjectByID(array[1]);
+        try {
+            if ((rs.next())) {
+                projectName = (String)rs.getObject("name");
+                System.out.println(projectName);
+                if (DBConnector.addUserToProject(array[0], projectName)) {
+                    ok = true;
+                } else {    ok = false;}
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return ok;
     }
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class Task implements Serializable{
     private static final long serialVersionUID = 42L;
     private String name;
-    private int position;
+    private int column;
     private String description;
     private Tag tag;
     private User userAssigned;
@@ -16,9 +16,9 @@ public class Task implements Serializable{
     public Task() {
     }
 
-    public Task(String name, int position, String description, Tag tag, User userAssigned) {
+    public Task(String name, int column, String description, Tag tag, User userAssigned) {
         this.name = name;
-        this.position = position;
+        this.column = column;
         this.description = description;
         this.tag = tag;
         this.userAssigned = userAssigned;
@@ -32,12 +32,12 @@ public class Task implements Serializable{
         this.name = name;
     }
 
-    public int getPosition() {
-        return position;
+    public int getColumn() {
+        return column;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setColumn(int position) {
+        this.column = column;
     }
 
     public String getDescription() {
@@ -68,10 +68,10 @@ public class Task implements Serializable{
     public String toString() {
         return "Task{" +
                 "name='" + name + '\'' +
-                ", position=" + position +
+                ", column=" + column +
                 ", description='" + description + '\'' +
-                ", tag=" + tag +
-                ", userAssigned=" + userAssigned +
+                ", tag=" + tag.getName() +
+                ", userAssigned=" + userAssigned.getNickname() +
                 '}';
     }
 }

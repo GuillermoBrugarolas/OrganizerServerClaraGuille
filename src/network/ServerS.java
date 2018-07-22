@@ -6,6 +6,7 @@ import java.net.Socket;
 
 import controller.MainViewController;
 import model.Logics;
+import model.Project;
 import model.User;
 
 
@@ -48,6 +49,7 @@ public class ServerS extends Thread {
     public void run(){
 
         String message;
+        Project project;
 
         while(isOn){
             try{
@@ -55,39 +57,53 @@ public class ServerS extends Thread {
                 ObjectOut = new ObjectOutputStream(sClient.getOutputStream());
                 ObjectIn = new ObjectInputStream(sClient.getInputStream());
                 Object o = ObjectIn.readObject();
-                message = (String)o;
-
-                if (message.startsWith("ADD")){
-                    if(Logics.addUser(message)){
+                if (o instanceof String) {
+                    message = (String) o;
+                    if (message.startsWith("ADD")) {
+                        if (Logics.addUser(message)) {
+                            ObjectOut.writeObject((String)"OK");
+                        } else {
+                            ObjectOut.writeObject((String)"KO");
+                        }
+                    } else if (message.startsWith("LOG")) {
+                        if (Logics.logUser(message)) {
+                            ObjectOut.writeObject((String)"OK");
+                        } else {
+                            ObjectOut.writeObject((String)"KO");
+                        }
+                    } else if (message.startsWith("GET")) {
+                        User userData;
+                        userData = Logics.getUser(message);
+                        ObjectOut.writeObject((User) userData);
+                    } else if (message.startsWith("GEU")) {
+                        String allUsersData;
+                        allUsersData = Logics.getAllUsers();
+                        if (!allUsersData.equals("")) {
+                            ObjectOut.writeObject((String)allUsersData);
+                        } else {
+                            ObjectOut.writeObject((String)"KO");
+                        }
+                    } else if (message.startsWith("DEL")) {
+                        if (Logics.deleteProject(message)) {
+                            ObjectOut.writeObject((String)"OK");
+                        } else {
+                            ObjectOut.writeObject((String)"KO");
+                        }
+                    } else if (message.startsWith("JIN")) {
+                        if (Logics.joinProject(message)) {
+                            ObjectOut.writeObject((String)"OK");
+                        } else {
+                            ObjectOut.writeObject((String)"KO");
+                        }
+                    } else {}
+                } else if (o instanceof Project){
+                    project = (Project)o;
+                    if (Logics.addNewProject(project)){
                         ObjectOut.writeObject((String)"OK");
-                    }else{
+                    } else {
                         ObjectOut.writeObject((String)"KO");
                     }
-                }
-                else if (message.startsWith("LOG")){
-                    if(Logics.logUser(message)){
-                        ObjectOut.writeObject((String)"OK");
-                    }else{
-                        ObjectOut.writeObject((String)"KO");
-                    }
-                }
-                else if (message.startsWith("GET")){
-                    User userData;
-                    System.out.println("get user");
-                    userData = Logics.getUser(message);
-                    ObjectOut.writeObject((User)userData);
-                }
-                else if (message.startsWith("GEU")){
-                    String allUsersData;
-                    System.out.println("get all users");
-                    allUsersData = Logics.getAllUsers();
-                    if(!allUsersData.equals("")){
-                        System.out.println(allUsersData);
-                        ObjectOut.writeObject((String)allUsersData);
-                    }else{
-                        ObjectOut.writeObject((String)"KO");
-                    }
-                } else {}
+                } else {/**/}
                 ObjectOut.close();
                 ObjectIn.close();
                 sClient.close();
