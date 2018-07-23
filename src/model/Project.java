@@ -73,9 +73,13 @@ public class Project implements Serializable{
     }
 
     public Column getColumn(int i) {
-        if (i == 1){    return columnOne;}
-        else if (i == 2){   return columnTwo;}
-        else if (i == 3){   return columnThree;}
+        if (i == 1){
+            return this.columnOne;
+        } else if (i == 2){
+            return this.columnTwo;
+        } else if (i == 3){
+            return this.columnThree;
+        }
         return null;
     }
 

@@ -12,16 +12,20 @@ public class Task implements Serializable{
     private String description;
     private Tag tag;
     private User userAssigned;
+    private String project;
+    private String category;
 
     public Task() {
     }
 
-    public Task(String name, int column, String description, Tag tag, User userAssigned) {
+    public Task(String name, int column, String description, Tag tag, User userAssigned, String project, String category) {
         this.name = name;
         this.column = column;
         this.description = description;
         this.tag = tag;
         this.userAssigned = userAssigned;
+        this.project = project;
+        this.category = category;
     }
 
     public String getName() {
@@ -64,6 +68,22 @@ public class Task implements Serializable{
         this.userAssigned = userAssigned;
     }
 
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -72,6 +92,8 @@ public class Task implements Serializable{
                 ", description='" + description + '\'' +
                 ", tag=" + tag.getName() +
                 ", userAssigned=" + userAssigned.getNickname() +
+                ", project=" + project +
+                ", category=" + category +
                 '}';
     }
 }

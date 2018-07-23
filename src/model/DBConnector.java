@@ -149,6 +149,30 @@ public class DBConnector {
         return true;
     }
 
+    public static boolean insertTask(Task t){
+        int in, si, cols, colPos;
+        String taskName, desc, userInCharge, tag, project, category;
+        taskName = t.getName();
+        desc = t.getDescription();
+        colPos = t.getColumn();
+        userInCharge = t.getUserAssigned().getNickname();
+        tag = t.getTag().getName();
+        project = t.getProject();
+        category = t.getCategory();
+        String query = "INSERT INTO tasques (name, columnposition, description, userincharge," +
+                " tagname, project, category) VALUES ('" +
+                taskName + "','" + colPos + "','" + desc + "','" + userInCharge + "','" + tag +
+                "','" + project + "','" + category + "')";
+        try {
+            s = (Statement) conn.createStatement();
+            s.executeUpdate(query);
+        } catch (SQLException ex) {
+            System.out.println("Problema al Inserir --> " + ex.getSQLState());
+            return false;
+        }
+        return true;
+    }
+
     public static void updateScore(String nickname, int score){
         String query = "UPDATE usuari SET score='"+score+"' WHERE nickname='"+nickname+"'";
         try {
@@ -286,9 +310,33 @@ public class DBConnector {
         return rs;
     }
 
+    public static ResultSet selectMembers(String projectName){
+        ResultSet rs = null;
+        String query = "SELECT * FROM members_projects WHERE project='"+projectName+"'";
+        try {
+            s = conn.createStatement();
+            rs = s.executeQuery (query);
+        } catch (SQLException ex) {
+            System.out.println("Problema al Recuperar les dades --> " + ex.getSQLState());
+        }
+        return rs;
+    }
+
     public static ResultSet selectProject(String name){
         ResultSet rs = null;
         String query = "SELECT * FROM projects WHERE name='"+name+"'";
+        try {
+            s = conn.createStatement();
+            rs = s.executeQuery (query);
+        } catch (SQLException ex) {
+            System.out.println("Problema al Recuperar les dades --> " + ex.getSQLState());
+        }
+        return rs;
+    }
+
+    public static ResultSet selectTasks(String projectName){
+        ResultSet rs = null;
+        String query = "SELECT * FROM tasques WHERE project='"+projectName+"'";
         try {
             s = conn.createStatement();
             rs = s.executeQuery (query);

@@ -230,6 +230,14 @@ public class Logics {
         return added;
     }
 
+    public static boolean addNewTask(Task t){
+        boolean added = false;
+        if (DBConnector.insertTask(t)){
+            added = true;
+        }
+        return added;
+    }
+
     public static boolean deleteProject(String message){
         boolean ok = false;
         message = message.substring(4);
@@ -248,7 +256,7 @@ public class Logics {
         array = message.split("/");
         rs = DBConnector.getProjectByID(array[1]);
         try {
-            if ((rs.next())) {
+            if ((rs != null) && (rs.next())) {
                 projectName = (String)rs.getObject("name");
                 System.out.println(projectName);
                 if (DBConnector.addUserToProject(array[0], projectName)) {
@@ -260,5 +268,68 @@ public class Logics {
             return false;
         }
         return ok;
+    }
+
+    public static Project getProject(String message){
+        String projectName, name, id, background, owner, col1Name, col2Name, col3Name, memberName, projNameTask;
+        int colPos;
+        String taskName, description, userInCharge, tagName, category;
+        LinkedList<Project> ownPs, joinedPs;
+        Column c1 = new Column(null, 1, new LinkedList<Task>());
+        Column c2 = new Column(null, 2, new LinkedList<Task>());
+        Column c3 = new Column(null, 3, new LinkedList<Task>());;
+        User uss, member;
+        Task task;
+        Project proj = new Project();
+        ResultSet dbProject, dbTasks, dbMembers;
+        projectName = message.substring(4);
+        dbProject = DBConnector.selectProject(projectName);
+        try {
+            if (dbProject != null && dbProject.next()) {
+                proj.setName((String)dbProject.getObject("name"));
+                proj.setId((String)dbProject.getObject("id"));
+                proj.setBackground((String)dbProject.getObject("background"));
+                owner = (String)dbProject.getObject("owner");
+                uss = getUser(owner);
+                proj.setOwner(uss);
+                c1.setName((String)dbProject.getObject("firstcolumnname"));
+                proj.setColumnOne(c1);
+                c2.setName((String)dbProject.getObject("secondcolumnname"));
+                proj.setColumnTwo(c2);
+                c3.setName((String)dbProject.getObject("thirdcolumnname"));
+                proj.setColumnThree(c3);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        dbTasks = DBConnector.selectTasks(proj.getName());
+        try {
+            while (dbTasks != null && dbTasks.next()) {
+                taskName = (String)dbTasks.getObject("name");
+                colPos = (int)dbTasks.getObject("columnposition");
+                description = (String)dbTasks.getObject("description");
+                userInCharge = (String)dbTasks.getObject("userincharge");
+                tagName = (String)dbTasks.getObject("tagname");
+                projNameTask = (String)dbTasks.getObject("project");
+                category = (String)dbTasks.getObject("category");
+                task = new Task(taskName, colPos, description, new Tag(tagName, null), new User(userInCharge, null, null, null, null), projNameTask, category);
+                proj.getColumn(colPos).addTask(task);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        dbMembers = DBConnector.selectMembers(proj.getName());
+        proj.setMembers(new LinkedList<User>());
+        try {
+            while (dbMembers != null && dbMembers.next()) {
+                memberName = (String)dbMembers.getObject("member");
+                System.out.println(memberName);
+                member = new User(memberName, null, null, null, null);
+                proj.addMember(member);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return proj;
     }
 }

@@ -7,6 +7,7 @@ import java.net.Socket;
 import controller.MainViewController;
 import model.Logics;
 import model.Project;
+import model.Task;
 import model.User;
 
 
@@ -50,6 +51,7 @@ public class ServerS extends Thread {
 
         String message;
         Project project;
+        Task task;
 
         while(isOn){
             try{
@@ -75,6 +77,10 @@ public class ServerS extends Thread {
                         User userData;
                         userData = Logics.getUser(message);
                         ObjectOut.writeObject((User) userData);
+                    } else if (message.startsWith("GEP")) {
+                        Project projectData;
+                        projectData = Logics.getProject(message);
+                        ObjectOut.writeObject((Project)projectData);
                     } else if (message.startsWith("GEU")) {
                         String allUsersData;
                         allUsersData = Logics.getAllUsers();
@@ -103,7 +109,14 @@ public class ServerS extends Thread {
                     } else {
                         ObjectOut.writeObject((String)"KO");
                     }
-                } else {/**/}
+                } else if (o instanceof Task) {
+                    task = (Task)o;
+                    if (Logics.addNewTask(task)){
+                        ObjectOut.writeObject((String)"OK");
+                    } else {
+                        ObjectOut.writeObject((String)"KO");
+                    }
+                }
                 ObjectOut.close();
                 ObjectIn.close();
                 sClient.close();
