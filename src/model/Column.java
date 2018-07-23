@@ -54,6 +54,10 @@ public class Column implements Serializable{
                 '}';
     }
 
+    /**
+     * Aquest mètode afegeix una tasca a la columna.
+     * @param task
+     */
     public void addTask(Task task){
         this.getTasks().add(task);
     }

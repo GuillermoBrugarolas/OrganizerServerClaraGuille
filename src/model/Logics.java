@@ -12,7 +12,8 @@ import controller.MainViewController;
 import model.DBConnector;
 /**
  * Aquesta classe conte els metodes que duen a terme tota la logica del programa.
- * @author nvall
+ * Aquesta classe conté moltes funcions similars que fan de link entre la comunicació
+ * client-servidor per sockets i la comunicació amb la base de dades MySQL.
  *
  */
 public class Logics {
@@ -247,6 +248,15 @@ public class Logics {
         return ok;
     }
 
+    public static boolean deleteTask(String message){
+        boolean ok = false;
+        message = message.substring(4);
+        if (DBConnector.deleteTask(message)){
+            ok = true;
+        } else { ok = false;}
+        return ok;
+    }
+
     public static boolean joinProject(String message){
         String[] array = new String[2];
         String projectName="";
@@ -258,8 +268,30 @@ public class Logics {
         try {
             if ((rs != null) && (rs.next())) {
                 projectName = (String)rs.getObject("name");
-                System.out.println(projectName);
                 if (DBConnector.addUserToProject(array[0], projectName)) {
+                    ok = true;
+                } else {    ok = false;}
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return ok;
+    }
+
+    public static boolean deleteMember(String message){
+        String[] array = new String[2];
+        String projectName="";
+        ResultSet rs;
+        boolean ok = false;
+        message = message.substring(4);
+        array = message.split("/");
+        rs = DBConnector.getProjectByID(array[1]);
+        try {
+            if ((rs != null) && (rs.next())) {
+                projectName = (String)rs.getObject("name");
+                System.out.println(array[0] + " || " + projectName);
+                if (DBConnector.deleteMemberFromProject(array[0], projectName)) {
                     ok = true;
                 } else {    ok = false;}
             }
@@ -289,9 +321,9 @@ public class Logics {
                 proj.setName((String)dbProject.getObject("name"));
                 proj.setId((String)dbProject.getObject("id"));
                 proj.setBackground((String)dbProject.getObject("background"));
+                proj.setOwner(new User());
                 owner = (String)dbProject.getObject("owner");
-                uss = getUser(owner);
-                proj.setOwner(uss);
+                proj.getOwner().setNickname(owner);
                 c1.setName((String)dbProject.getObject("firstcolumnname"));
                 proj.setColumnOne(c1);
                 c2.setName((String)dbProject.getObject("secondcolumnname"));

@@ -1,5 +1,11 @@
 package network;
 
+/**
+ * Aquesta classe conté el socket del servidor que accepta connexions asíncrones de
+ * tots els usuaris connectats. Segons la petició que rebi, iniciarà un tipus de contacte
+ * o altre amb la base de dades MySQL i tornarà a comunicarse amb el client.
+ */
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -91,6 +97,18 @@ public class ServerS extends Thread {
                         }
                     } else if (message.startsWith("DEL")) {
                         if (Logics.deleteProject(message)) {
+                            ObjectOut.writeObject((String)"OK");
+                        } else {
+                            ObjectOut.writeObject((String)"KO");
+                        }
+                    } else if (message.startsWith("DET")) {
+                        if (Logics.deleteTask(message)) {
+                            ObjectOut.writeObject((String)"OK");
+                        } else {
+                            ObjectOut.writeObject((String)"KO");
+                        }
+                    } else if (message.startsWith("DMP")) {
+                        if (Logics.deleteMember(message)) {
                             ObjectOut.writeObject((String)"OK");
                         } else {
                             ObjectOut.writeObject((String)"KO");

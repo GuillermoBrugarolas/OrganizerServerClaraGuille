@@ -34,7 +34,7 @@ public class TableView extends JFrame {
     }
 
     public void fillTable(LinkedList<TasksObject> list){
-        for (int i = 0; i < list.size(); i++){
+        for (int i = 0; i < 10; i++){
             list.get(i).setPosition(i+1);
             int position = list.get(i).getPosition();
             String username = list.get(i).getUsername();

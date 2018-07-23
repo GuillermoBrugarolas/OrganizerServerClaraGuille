@@ -66,6 +66,11 @@ public class DBConnector {
         return true;
     }
 
+    /**
+     * Insereix un nou projecte a la base de dades incloent tot els seus atributs.
+     * @param p
+     * @return
+     */
     public static boolean insertProject(Project p){
         String name, id, background, owner, first, second, third;
         name = p.getName();
@@ -90,6 +95,11 @@ public class DBConnector {
         return true;
     }
 
+    /**
+     * Aquest mètode inserta els membres dun projecte a la base de dades.
+     * @param p
+     * @return
+     */
     public static boolean insertMembers(Project p){
         int in, size;
         String name, memberName;
@@ -111,6 +121,11 @@ public class DBConnector {
         return true;
     }
 
+    /**
+     * Aquest mètode insereix a la base de dades les tasques associades a un mateix projecte.
+     * @param p
+     * @return
+     */
     public static boolean insertTasks(Project p){
         int in, si, cols, colPos;
         Column c;
@@ -149,6 +164,11 @@ public class DBConnector {
         return true;
     }
 
+    /**
+     * Aquest mètode insereix una tasca a la base de dades.
+     * @param t
+     * @return
+     */
     public static boolean insertTask(Task t){
         int in, si, cols, colPos;
         String taskName, desc, userInCharge, tag, project, category;
@@ -173,16 +193,10 @@ public class DBConnector {
         return true;
     }
 
-    public static void updateScore(String nickname, int score){
-        String query = "UPDATE usuari SET score='"+score+"' WHERE nickname='"+nickname+"'";
-        try {
-            s = conn.createStatement();
-            s.executeUpdate(query);
-        } catch (SQLException ex) {
-            System.out.println("Problema al Modificar --> " + ex.getSQLState());
-        }
-    }
-
+    /**
+     * Aquest mètode elimina un usuari de la base de dades.
+     * @param nickname
+     */
     public static void deleteUser(String nickname){
         String query = "DELETE FROM users WHERE nickname='"+nickname+"'";
         try {
@@ -194,6 +208,36 @@ public class DBConnector {
 
     }
 
+    /**
+     * Aquest mètode elimina una tasca (passa a completades).
+     * @param taskName
+     * @return
+     */
+    public static boolean deleteTask(String taskName) {
+        String query1 = "INSERT INTO tasques_compl SELECT * FROM tasques WHERE name='" + taskName + "'";
+        try {
+            s = conn.createStatement();
+            s.executeUpdate(query1);
+        } catch (SQLException ex) {
+            System.out.println("Problema al Moure --> " + ex.getSQLState());
+            return false;
+        }
+        String query2 = "DELETE FROM tasques WHERE name='" + taskName + "'";
+        try {
+            s = conn.createStatement();
+            s.executeUpdate(query2);
+        } catch (SQLException ex) {
+            System.out.println("Problema al Eliminar --> " + ex.getSQLState());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Aquest mètode elimina un projecte de la base de dades.
+     * @param projectName
+     * @return
+     */
     public static boolean deleteProject(String projectName){
         String query1 = "DELETE FROM projects WHERE name='"+projectName+"'";
         try {
@@ -252,6 +296,12 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode retorna el nombre de tasques associades a un usuari.
+     * @param username
+     * @param pendNotCompl
+     * @return
+     */
     public static int selectNumOfTasks(String username, int pendNotCompl){
         int count = 0;
         String query="";
@@ -286,6 +336,11 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode selecciona els projectes propis dun usuari.
+     * @param nickname
+     * @return
+     */
     public static ResultSet selectOwnProjects(String nickname){
         ResultSet rs = null;
         String query = "SELECT * FROM projects WHERE owner='"+nickname+"'";
@@ -298,6 +353,11 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest projecte selecciona els projectes als quals sha unit lusuari.
+     * @param nickname
+     * @return
+     */
     public static ResultSet selectJoinedProjects(String nickname){
         ResultSet rs = null;
         String query = "SELECT * FROM members_projects WHERE member='"+nickname+"'";
@@ -310,6 +370,11 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest projecte selecciona els membres del projecte que es passa per paràmetre.
+     * @param projectName
+     * @return
+     */
     public static ResultSet selectMembers(String projectName){
         ResultSet rs = null;
         String query = "SELECT * FROM members_projects WHERE project='"+projectName+"'";
@@ -322,6 +387,11 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètodde retorna el projecte amb nom igual al paràmetre.
+     * @param name
+     * @return
+     */
     public static ResultSet selectProject(String name){
         ResultSet rs = null;
         String query = "SELECT * FROM projects WHERE name='"+name+"'";
@@ -334,6 +404,11 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode retorna les tasques associades a un mateix projecte.
+     * @param projectName
+     * @return
+     */
     public static ResultSet selectTasks(String projectName){
         ResultSet rs = null;
         String query = "SELECT * FROM tasques WHERE project='"+projectName+"'";
@@ -346,6 +421,11 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode retorna el projecte amb ID igual al paràmetre.
+     * @param id
+     * @return
+     */
     public static ResultSet getProjectByID(String id){
         ResultSet rs = null;
         String query = "SELECT * FROM projects WHERE id='"+id+"'";
@@ -358,6 +438,12 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode retorna si sha trobat lusuari amb nom i contrassenya indicats.
+     * @param nickname
+     * @param password
+     * @return
+     */
     public static ResultSet selectUserPassword(String nickname, String password){
         ResultSet rs = null;
         String query = "SELECT * FROM users WHERE nickname='"+nickname+"' and password='"+password+"'";
@@ -370,6 +456,11 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode retorna lusuari amb mail indicat.
+     * @param email
+     * @return
+     */
     public static ResultSet selectEMail(String email){
         ResultSet rs = null;
         String query = "SELECT * FROM users WHERE email='"+email+"'";
@@ -382,6 +473,12 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode retorna lusuari amb nom i contrassenya indicats.
+     * @param email
+     * @param password
+     * @return
+     */
     public static ResultSet selectEMailPassword(String email, String password){
         ResultSet rs = null;
         String query = "SELECT * FROM users WHERE email='"+email+"' and password='"+password+"'";
@@ -394,6 +491,12 @@ public class DBConnector {
         return rs;
     }
 
+    /**
+     * Aquest mètode afegeix un usuari com a membre dun projecte.
+     * @param userName
+     * @param projectName
+     * @return
+     */
     public static boolean addUserToProject(String userName, String projectName){
         String query = "INSERT INTO members_projects (member, project) VALUES ('"+
                 userName+"','"+projectName+"')";
@@ -402,6 +505,24 @@ public class DBConnector {
             s.executeUpdate(query);
         } catch (SQLException ex) {
             System.out.println("Problema al Inserir --> " + ex.getSQLState());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Elimina un membre dun projecte.
+     * @param userName
+     * @param projectName
+     * @return
+     */
+    public static boolean deleteMemberFromProject(String userName, String projectName){
+        String query = "DELETE FROM members_projects WHERE project='"+projectName+"' AND member='"+userName+"'";
+        try {
+            s = conn.createStatement();
+            s.executeUpdate(query);
+        } catch (SQLException ex) {
+            System.out.println("Problema al Eliminar --> " + ex.getSQLState());
             return false;
         }
         return true;
